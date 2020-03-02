@@ -3,8 +3,8 @@ PSF = imread('RPi_PSF.png');
 
 i = 1;
 for c = ['A' 'B' 'C' 'D']
-    fprintf('Matching image %s', c);
-    cam = imread(sprintf('2020_01_14/orientation/%s.png', c));
+    fprintf('Matching image %s\n', c);
+    cam = imread(sprintf('2020_01_24/orientation/%s.png', c));
 
     [PSF_points, cam_points] = cpselect(cam, PSF, 'Wait', true);
     tform = fitgeotrans(PSF_points, cam_points, 'similarity');

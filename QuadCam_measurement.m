@@ -1,4 +1,4 @@
-load '2020_01_14/cam_tforms.mat'
+load '2020_01_24/cam_tforms.mat'
 mode = 'measurement'; % 'orientation', 'mask', 'measurement'
 
 PSF = imread('RPi_PSF.png');
@@ -14,7 +14,7 @@ panorama = step(blender, panorama, PSF, mask);
 
 i = 1;
 for c = ['A', 'B', 'C', 'D']
-    cam = imread(sprintf('2020_01_14/star_shift_more/%s.png', c));
+    cam = imread(sprintf('2020_01_24/led_centered2/%s.png', c));
     if strcmp(mode, 'mask')
         cam = 255*uint8(ones(size(cam)));
     end    
