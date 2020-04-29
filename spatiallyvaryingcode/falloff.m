@@ -1,0 +1,19 @@
+% units = cm
+Z = 30.48;
+D = 0.9;
+SX = 2.128;
+SY = 2.128;
+
+px = ;  % point source location
+py = 5;
+x = linspace(0, SX-1, 500);
+y = linspace(0, SY-1, 500);
+[xx, yy] = meshgrid(x, y);
+r = (xx - px).^2.0 + (yy - py).^2.0;
+theta = atan(sqrt(r) / (D + Z));
+f = cos(theta).^4.0;
+r2 = r + (Z + D)^2;
+r2 = r2 / max(r2(:));
+fr = f ./ r2;
+fr = fr / max(fr(:));
+f = f / max(f(:));

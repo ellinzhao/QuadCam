@@ -111,7 +111,7 @@ raw_path = 'example_data/raw/';
 raw_name = '0426_res03.png';
 dctsub_data = 0; % remove low DCT coefficients of raw data
 
-br = double(imread('./offaxisps.png'));
+br = double(imread('./b_star_localconv_gauss.png'));
 
 B = fft2(br);
 

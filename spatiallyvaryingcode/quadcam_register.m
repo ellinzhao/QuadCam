@@ -5,8 +5,8 @@ psf = rgb2gray(imread('./RPi_PSF.png'));
 psf = im2double(imresize(psf, [500, 500], 'box'));
 psf = psf / norm(psf, 'fro');
 
-num_around_center_y = 3;
-num_around_center_x = 3; 
+num_around_center_y = 2;
+num_around_center_x = 2; 
 
 step = 400; % not used 
 Nx = 500; 
@@ -28,6 +28,7 @@ psfc = psfs(:,:,num_around_center_y+1,num_around_center_x+1);
 
 %% Select points 
 
+
 figure, imagesc(psfs(:,:,1));
 n = (2*num_around_center_y + 1) * (2*num_around_center_x + 1);
 coordinates = zeros(n, 2);
@@ -44,6 +45,24 @@ close
 xpos = reshape(coordinates(:,1).', 2*num_around_center_x + 1, 2*num_around_center_y + 1).';
 ypos = reshape(coordinates(:,2).', 2*num_around_center_x + 1, 2*num_around_center_y + 1).';
 
+
+%% Sample positions
+
+%{
+xpos = zeros(2*num_around_center_y + 1, 2*num_around_center_x + 1);
+ypos = zeros(2*num_around_center_y + 1, 2*num_around_center_x + 1);
+
+sub_nx = Nx / (2*num_around_center_x + 1);
+sub_ny = Ny / (2*num_around_center_y + 1);
+for j = 0:(2*num_around_center_y)
+    py = Ny/2 + sub_ny/2 + j*sub_ny;
+    for i = 0:(2*num_around_center_x)
+        px = Nx/2 + sub_nx/2 + i*sub_nx;
+        xpos(j+1, i+1) = px;
+        ypos(j+1, i+1) = py;
+    end
+end
+%}
 
 %% Plot positions of samples
 
@@ -63,8 +82,8 @@ drawnow
 
 %% Synthetic PSFs
 
-Sy = 90;  % size of synthetic PSFs
-Sx = 90;
+Sy = 150;  % size of synthetic PSFs
+Sx = 150;
 
 for i = 1:(2*(num_around_center_x)+1)
     for j = 1:(2*(num_around_center_y)+1)
@@ -72,6 +91,7 @@ for i = 1:(2*(num_around_center_x)+1)
         y = round(ypos(j, i));
         mask = zeros(size(psfs(:, :, j, i)));
         mask(y-Sy/2:y+Sy/2, x-Sx/2:x+Sx/2) = 1;
+        mask = imgaussfilt(mask, [Sy-1,Sx-1], 'FilterSize', [Sy-1, Sx-1], 'FilterDomain', 'frequency');
         psfs(:, :, j, i) = psfs(:, :, j, i) .* mask;
     end
 end
