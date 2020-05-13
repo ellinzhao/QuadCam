@@ -14,6 +14,7 @@ function [out,varargout] = proxMin(GradErrHandle,ProxFunc,x0,b,options)
 % options: similar to minFunc, but won't support all of the same options.
 %
 % Nick Antipa, summer 2016
+
 if ~isa(GradErrHandle,'function_handle')
     GradErrHandle = @(x) matrixError(GradErrHandle,transpose(GradErrHandle),x,b);
 end
@@ -46,7 +47,7 @@ fm1 = 0;
 f = inf;
 switch lower(options.momentum)
     case('linear')
-        while (step_num < options.maxIter) && (f>options.residTol);
+        while (step_num < options.maxIter) && (f>options.residTol)
             
             step_num = step_num+1;
             [ f, g ] = GradErrHandle( yk );

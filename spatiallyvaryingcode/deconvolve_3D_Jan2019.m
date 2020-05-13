@@ -111,7 +111,7 @@ raw_path = 'example_data/raw/';
 raw_name = '0426_res03.png';
 dctsub_data = 0; % remove low DCT coefficients of raw data
 
-br = double(imread('./b_star_localconv_gauss.png'));
+br = double(imread('./b_05_04.png'));
 
 B = fft2(br);
 
@@ -150,7 +150,7 @@ for i = 1:size(weights,3)
     weights(:,:,i) = weights(:,:,i)./ss;
 end
 
-edgecrop = 10;
+edgecrop = 0;
 Apca = @(x)A_pca_3d(PC, weights, x, pad, crop, use_gpu, edgecrop);
 Apcat = @(x)A_adj_pca_3d(PC, weights, x, crop, pad, use_gpu, edgecrop);
 if edgecrop~= 0
@@ -177,7 +177,7 @@ h2 = figure(16), clf
 h1 = figure(15), clf
 options.fighandle = h1;
 
-options.stepsize = 1e-4; %1e-6;
+options.stepsize = 1e-5; %1e-6;
 options.convTol = 1e-12;
 options.residTol = 50;
 options.momentum = 'nesterov';
@@ -189,7 +189,7 @@ options.disp_crop = @(x)rot90(x(:,:,1),0); %(max(abs(x)/max(x(:)),0)).^options.d
 options.known_input = 0;
 options.force_real = 1;
 options.color_map = 'parula';
-options.maxIter = 100;
+options.maxIter = 500;
 options.customDisplay = 0;
 options.displayFunc = @(x)displayFunc_2plane(rot90(x(:,:,1),2), ...
     rot90(x(:,:,2),2), options.fighandle, ...
@@ -228,7 +228,7 @@ for i = 1:size(weights,3)
 end
 
 
-edgecrop = 12;
+edgecrop = 0;
 dctest = 10;
 
 Apcabg = @(x, BG) A_pca_3d_bg(PC, weights,x, BG, pad,crop, use_gpu, edgecrop);
@@ -263,7 +263,7 @@ h2 = figure(16), clf
 options.fighandle = h1;
 
 options.stepsize = 5e-5; %1e-6;
-options.convTol = 1e-10;
+options.convTol = 1e-20;
 options.residTol = 10;
 options.momentum = 'nesterov';
 options.disp_figs = 1;

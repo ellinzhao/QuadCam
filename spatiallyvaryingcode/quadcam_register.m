@@ -27,8 +27,7 @@ psfc = psfs(:,:,num_around_center_y+1,num_around_center_x+1);
 
 
 %% Select points 
-
-
+%{
 figure, imagesc(psfs(:,:,1));
 n = (2*num_around_center_y + 1) * (2*num_around_center_x + 1);
 coordinates = zeros(n, 2);
@@ -44,11 +43,10 @@ close
 % reshape by row
 xpos = reshape(coordinates(:,1).', 2*num_around_center_x + 1, 2*num_around_center_y + 1).';
 ypos = reshape(coordinates(:,2).', 2*num_around_center_x + 1, 2*num_around_center_y + 1).';
-
+%}
 
 %% Sample positions
 
-%{
 xpos = zeros(2*num_around_center_y + 1, 2*num_around_center_x + 1);
 ypos = zeros(2*num_around_center_y + 1, 2*num_around_center_x + 1);
 
@@ -58,11 +56,11 @@ for j = 0:(2*num_around_center_y)
     py = Ny/2 + sub_ny/2 + j*sub_ny;
     for i = 0:(2*num_around_center_x)
         px = Nx/2 + sub_nx/2 + i*sub_nx;
-        xpos(j+1, i+1) = px;
-        ypos(j+1, i+1) = py;
+        xpos(2*num_around_center_y-j+1, i+1) = px;
+        ypos(2*num_around_center_y-j+1, i+1) = py;
     end
 end
-%}
+
 
 %% Plot positions of samples
 
@@ -82,17 +80,24 @@ drawnow
 
 %% Synthetic PSFs
 
-Sy = 150;  % size of synthetic PSFs
-Sx = 150;
-
 for i = 1:(2*(num_around_center_x)+1)
     for j = 1:(2*(num_around_center_y)+1)
         x = round(xpos(j, i));
         y = round(ypos(j, i));
-        mask = zeros(size(psfs(:, :, j, i)));
-        mask(y-Sy/2:y+Sy/2, x-Sx/2:x+Sx/2) = 1;
-        mask = imgaussfilt(mask, [Sy-1,Sx-1], 'FilterSize', [Sy-1, Sx-1], 'FilterDomain', 'frequency');
-        psfs(:, :, j, i) = psfs(:, :, j, i) .* mask;
+        ps_shifted = zeros(size(psfs(:, :, j, i)));
+        ps_shifted(y, x) = 1;
+        psf_shifted = forward_model_2d(ps_shifted, psfs(:, :, j, i));
+        % mask = zeros(size(psfs(:, :, j, i)));
+        % mask(500, 500) = 1;
+        % mask = imgaussfilt(mask, [160, 160], 'FilterSize', [999, 999], 'FilterDomain', 'frequency');
+        % mask = mask ./ 6.2394e-06;
+        [ny_full, nx_full] = size(psfs(:, :, j, i));
+        psf_shifted = psf_shifted; %.* mask;
+        psf_shifted(1:250, :) = 0;
+        psf_shifted(750:1000, :) = 0;
+        psf_shifted(:, 1:250) = 0;
+        psf_shifted(:, 750:1000) = 0;
+        psfs(:, :, j, i) = psf_shifted;
     end
 end
 
